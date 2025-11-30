@@ -1,0 +1,77 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+LICENSE
+
+# Build output
+**/bin/
+**/obj/
+**/out/
+
+# Test results
+TestResults/
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+
+# IDE files
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Node modules (if any frontend)
+node_modules/
+npm-debug.log*
+
+# Logs
+logs
+*.log
+log.txt
+
+# Docker files (we don't need these in the image)
+**/Dockerfile*
+**/.dockerignore
+docker-compose*.yml
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Package files
+*.nupkg
+*.snupkg
+
+# JetBrains
+.idea/
+*.sln.iml
+
+# Local History for Visual Studio
+.localhistory/
+
+# Temporary files
+*.tmp
+*.temp
