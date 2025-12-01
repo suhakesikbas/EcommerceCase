@@ -1,0 +1,4 @@
+
+CREATE DATABASE "OrderDb";
+CREATE DATABASE "StockDb";
+CREATE DATABASE "NotificationDb";

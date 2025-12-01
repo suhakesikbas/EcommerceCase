@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using OrderService.Api.Application.Orders.Commands;
+using OrderService.Api.Application.Orders.Queries.GetOrders;
 
 namespace OrderService.Api.Controllers;
 
@@ -9,19 +10,29 @@ namespace OrderService.Api.Controllers;
 [ApiController]
 public class OrdersController(IMediator _mediator, ILogger<OrdersController> _logger) : ControllerBase
 {
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyCollection<OrderDto>>> GetAll(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var query = new GetOrdersQuery();
+            var result = await _mediator.Send(query, cancellationToken);
+            
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "OrdersController: Failed to retrieve orders");
+            throw;
+        }
+    }
 
     [HttpPost]
     public async Task<ActionResult<CreateOrderResult>> Create([FromBody] CreateOrderCommand command, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("OrdersController: Received create order request for customer {CustomerId} with {ItemCount} items", 
-            command.CustomerId, command.Items.Count);
-        
         try
         {
             var result = await _mediator.Send(command, cancellationToken);
-            
-            _logger.LogInformation("OrdersController: Successfully created order {OrderId} for customer {CustomerId}", 
-                result.OrderId, command.CustomerId);
             
             return Ok(result);
         }

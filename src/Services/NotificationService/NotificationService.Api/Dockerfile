@@ -13,7 +13,7 @@ COPY ["EcommerceApp.sln", "."]
 
 # Copy project files
 COPY ["src/Services/NotificationService/NotificationService.Api/NotificationService.Api.csproj", "src/Services/NotificationService/NotificationService.Api/"]
-COPY ["src/Contracts/EcommerceApp.Shared/EcommerceApp.Shared.csproj", "src/Contracts/EcommerceApp.Shared/"]
+COPY ["src/Shared/EcommerceApp.Shared/EcommerceApp.Shared.csproj", "src/Shared/EcommerceApp.Shared/"]
 
 # Restore packages
 RUN dotnet restore "src/Services/NotificationService/NotificationService.Api/NotificationService.Api.csproj"

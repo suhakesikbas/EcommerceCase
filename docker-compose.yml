@@ -1,48 +1,85 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  # Order Service
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - ecommerce-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres-init/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - ecommerce-network
+
   orderservice:
     build:
       context: .
       dockerfile: src/Services/OrderService/OrderService.Api/Dockerfile
     container_name: orderservice
+    depends_on:
+      - rabbitmq
+      - postgres
+    restart: always
     ports:
       - "5001:8080"
       - "5002:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8080;https://+:8081
+      - ConnectionStrings__PostgreSQL=Host=postgres;Port=5432;Database=OrderDb;Username=postgres;Password=postgres123
+      - RabbitMQ__Host=rabbitmq
     networks:
       - ecommerce-network
 
-  # Stock Service
   stockservice:
     build:
       context: .
       dockerfile: src/Services/StockService/StockService.Api/Dockerfile
     container_name: stockservice
+    depends_on:
+      - rabbitmq
+      - postgres
     ports:
       - "5003:8080"
       - "5004:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8080;https://+:8081
+      - ConnectionStrings__PostgreSQL=Host=postgres;Port=5432;Database=StockDb;Username=postgres;Password=postgres123
+      - RabbitMQ__Host=rabbitmq
     networks:
       - ecommerce-network
 
-  # Notification Service
   notificationservice:
     build:
       context: .
       dockerfile: src/Services/NotificationService/NotificationService.Api/Dockerfile
     container_name: notificationservice
+    depends_on:
+      - rabbitmq
+      - postgres
     ports:
       - "5005:8080"
       - "5006:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8080;https://+:8081
+      - ConnectionStrings__PostgreSQL=Host=postgres;Port=5432;Database=NotificationDb;Username=postgres;Password=postgres123
+      - RabbitMQ__Host=rabbitmq
     networks:
       - ecommerce-network
 
@@ -52,3 +89,4 @@ networks:
 
 volumes:
   ecommerce-data:
+  pgdata:
